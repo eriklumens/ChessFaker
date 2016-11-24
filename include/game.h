@@ -22,6 +22,9 @@ class Game
     std::string getPrintValue(std::vector<int> piece);
     void printBoard();
     bool check();
+    std::vector< std::vector <int>> piecesOnFile(int file);
+    std::vector< std::vector <int>> piecesOnRow(int row);
+    std::vector< std::vector <int>> piecesHorseJumpAway(int file, int row);
     bool legalMove(std::string move);
     void makeMove(std::string move);    
 };

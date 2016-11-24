@@ -145,6 +145,65 @@ bool Game::check()
 	return check;
 }
 
+std::vector< std::vector <int>> Game::piecesOnFile(int file)
+{
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	std::vector< std::vector <int>> myPiecesOnFile;
+	for(int i = 0; i < 8; ++i)
+	{
+		std::vector<int> myPiece = myBoard[i][file];
+		if(myPiece[1] != 0)
+		{
+			myPiecesOnFile.push_back(myPiece);
+		}
+	}
+	return myPiecesOnFile;
+}
+
+std::vector< std::vector <int>> Game::piecesOnRow(int row)
+{
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	std::vector< std::vector <int>> myPiecesOnRow;
+	for(int i = 0; i < 8; ++i)
+	{
+		std::vector<int> myPiece = myBoard[row][i];
+		if(myPiece[1] != 0)
+		{
+			myPiecesOnRow.push_back(myPiece);
+		}
+	}
+	return myPiecesOnRow;
+}
+
+std::vector< std::vector <int>> Game::piecesHorseJumpAway(int file, int row)
+{
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	std::vector< std::vector <int>> myPiecesHorseJumpAway;
+	std::vector<int> addValues = {1,2,-1,-2};
+	for(int i = 0; i < 4; ++i)
+	{
+		for(int j = 0; j < 4; ++j)
+		{
+			if((j%2) != (i%2))
+			{
+				int myX = file + addValues[i];
+				int myY = row + addValues[j];
+				if(myX > -1 and myY > -1 and myX < 8 and myY < 8)
+				{
+					//Position lies inside the board
+									std::cout << "(" <<addValues[i] << ", " << addValues[j] << "): i = " << i << ", j = " << j <<std::endl;
+					std::vector<int> myPiece = myBoard[myY][myX];
+					if(myPiece[1] != 0)
+					{
+						myPiecesHorseJumpAway.push_back(myPiece);
+					}
+				}
+			}
+		}
+	}
+	return myPiecesHorseJumpAway;
+}
+
 bool Game::legalMove(std::string move)
 {
 	bool legal = true;
