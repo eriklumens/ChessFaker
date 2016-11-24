@@ -13,5 +13,8 @@ int main()
 	
 	Game game(myBoard, 0);
 	game.printBoard();
-	game.check();
+	game.makeMove("e2e4");
+	game.printBoard();
+	game.makeMove("e7e5");
+	game.printBoard();
 }
