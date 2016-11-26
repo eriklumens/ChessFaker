@@ -21,17 +21,20 @@ class Game
     std::vector< std::vector< std::vector <int>>> getBoard();
     std::string getPrintValue(std::vector<int> piece);
     void printBoard();
+    
     std::vector< std::vector <int>> piecesOnFile(int file);
     std::vector< std::vector <int>> piecesOnRow(int row);
     std::vector< std::vector <int>> piecesHorseJumpAway(int file, int row);
-    std::vector< std::vector <int>> pawnsThatAttackSquare(int file, int row, int attSide);
     std::vector< std::vector< std::vector<int>>> piecesOnDiagonals(int file, int row);
+    std::vector< std::vector <int>> pawnsThatAttackSquare(int file, int row, int attSide);
+    
 	int howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedByRook(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide);
+	
     bool check();
     bool legalMove(std::string move);
     void makeMove(std::string move);    
