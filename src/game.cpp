@@ -138,13 +138,6 @@ void Game::printBoard()
 	return;
 }
 
-bool Game::check()
-{
-	bool check = false;
-	// checks whether the player who is moving this turn is in check
-	return check;
-}
-
 std::vector< std::vector <int>> Game::piecesOnFile(int file)
 {
 	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
@@ -301,6 +294,80 @@ std::vector< std::vector< std::vector<int>>> Game::piecesOnDiagonals(int file, i
 	myPiecesOnDiagonals.push_back(myFirstDiagonal);
 	myPiecesOnDiagonals.push_back(mySecondDiagonal);
 	return myPiecesOnDiagonals;
+}
+
+int Game::howManyTimesIsSquareAttacked(int file, int row, int attSide)
+{
+	int nrOfAttacks = 0;
+	//First horse, is square attacked by horse of opposing side?
+	std::vector< std::vector <int>> myPiecesHorseJumpAway = piecesHorseJumpAway(file,row);
+	for(unsigned int i = 0; i < myPiecesHorseJumpAway.size(); ++i)
+	{
+		std::vector<int> myPiece = myPiecesHorseJumpAway[i];
+		if(myPiece[0] == 5 and myPiece[1] == attSide)
+		{
+			nrOfAttacks = nrOfAttacks + 1;
+		} 
+	}
+	//Next pawn, is square attacked by pawn of opposing side?
+	return nrOfAttacks;
+}
+
+bool Game::check()
+{
+	bool check = false;
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	if(turn % 2 == 0)
+	{
+		//White's turn, is white in check?
+		//First, where is the king?
+		bool kingIsNotFound = true;
+		int kingX = 0;
+		int kingY = 0;
+		for(int i = 0; i < 8 and kingIsNotFound; ++i)
+		{
+			for(int j = 0; j < 8 and kingIsNotFound; ++j)
+			{
+				std::vector <int> myPos = myBoard[j][i];
+				if(myPos[0] == 1 and myPos[1] == 1)
+				{
+					kingY = j;
+					kingX = i;
+					kingIsNotFound = false;
+				} 
+			}
+		}
+		if(howManyTimesIsSquareAttacked(kingX,kingY,2) != 0)
+		{
+			check = true;
+		}
+	}
+	else
+	{
+		//Black's turn, is black in check?
+		//First, where is the king?
+		bool kingIsNotFound = true;
+		int kingX = 0;
+		int kingY = 0;
+		for(int i = 0; i < 8 and kingIsNotFound; ++i)
+		{
+			for(int j = 0; j < 8 and kingIsNotFound; ++j)
+			{
+				std::vector <int> myPos = myBoard[j][i];
+				if(myPos[0] == 1 and myPos[1] == 2)
+				{
+					kingY = j;
+					kingX = i;
+					kingIsNotFound = false;
+				} 
+			}
+		}
+		if(howManyTimesIsSquareAttacked(kingX,kingY,2) != 0)
+		{
+			check = true;
+		}
+	}
+	return check;
 }
 
 bool Game::legalMove(std::string move)
