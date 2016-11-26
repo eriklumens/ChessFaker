@@ -293,7 +293,6 @@ std::vector< std::vector< std::vector<int>>> Game::piecesOnDiagonals(int file, i
 	{
 		for(int i = 0; i < 8- mySecFile; ++i)
 		{
-			std::cout << "i = " <<i <<  std::endl;
 			int myX = mySecFile + i;
 			int myY = 7 - i;
 			std::vector<int> myPiece = myBoard[myY][myX];
@@ -376,7 +375,6 @@ std::vector< std::vector <int>> Game::pawnsThatAttackSquare(int file, int row, i
 int Game::howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide)
 {
 	int nrOfAttacks = 0;
-	//First horse, is square attacked by horse of opposing side?
 	std::vector< std::vector <int>> myPiecesHorseJumpAway = piecesHorseJumpAway(file,row);
 	for(unsigned int i = 0; i < myPiecesHorseJumpAway.size(); ++i)
 	{
@@ -595,6 +593,194 @@ int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
 int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
 {
 	int nrOfAttacks = 0;
+	
+	//First files and rows
+	std::vector< std::vector <int>> myPiecesOnFile = piecesOnFile(file);
+    std::vector< std::vector <int>> myPiecesOnRow = piecesOnRow(row);
+    std::vector< std::vector<int>> queensOnFile;
+    std::vector< std::vector<int>> queensOnRow;
+    
+    for(unsigned int i = 0; i < myPiecesOnFile.size(); ++i)
+    {
+    	std::vector <int> myPiece = myPiecesOnFile[i];
+    	if(myPiece[0] == 2 and myPiece[1] == attSide)
+    	{
+    		queensOnFile.push_back(myPiece);
+    	}
+    }
+    for(unsigned int i = 0; i < myPiecesOnRow.size(); ++i)
+    {
+    	std::vector<int> myPiece = myPiecesOnRow[i];
+    	if(myPiece[0] == 2 and myPiece[1] == attSide)
+    	{
+    		queensOnRow.push_back(myPiece);
+    	}
+    }
+    for(unsigned int i = 0; i < queensOnFile.size(); ++i)
+    {
+    	std::vector<int> myPiece = queensOnFile[i];
+    	int myRow = myPiece[3];
+    	bool queenIsBlocked = false;
+    	if(myRow < row)
+    	{
+    		for(unsigned int j = 0; j < myPiecesOnFile.size(); ++j)
+    		{
+    			std::vector<int> myBlockPiece = myPiecesOnFile[j];
+    			int myBlockRow = myBlockPiece[3];
+    			if(myBlockRow > myRow and myBlockRow < row)
+    			{
+    				queenIsBlocked = true;
+    			}
+    		}
+    	}
+    	else if(myRow > row)
+    	{
+    		for(unsigned int j = 0; j < myPiecesOnFile.size(); ++j)
+    		{
+    			std::vector<int> myBlockPiece = myPiecesOnFile[j];
+    			int myBlockRow = myBlockPiece[3];
+    			if(myBlockRow > row and myBlockRow < myRow)
+    			{
+    				queenIsBlocked = true;
+    			}
+    		}
+    	}
+    	if(queenIsBlocked == false)
+    	{
+    		nrOfAttacks = nrOfAttacks + 1;
+    	}
+    }
+    
+    for(unsigned int i = 0; i < queensOnRow.size(); ++i)
+    {
+    	std::vector <int> myPiece = queensOnRow[i];
+    	int myFile = myPiece[2];
+    	bool queenIsBlocked = false;
+    	if(myFile < file)
+    	{
+    		for(unsigned int j = 0; j < myPiecesOnRow.size(); ++j)
+    		{
+    			std::vector<int> myBlockPiece = myPiecesOnRow[j];
+    			int myBlockFile = myBlockPiece[2];
+    			if(myBlockFile > myFile and myBlockFile < file)
+    			{
+    				queenIsBlocked = true;
+    			}
+    		}
+    	}
+    	else if(myFile > file)
+    	{
+    		for(unsigned int j = 0; j < myPiecesOnRow.size(); ++j)
+    		{
+    			std::vector<int> myBlockPiece = myPiecesOnRow[j];
+    			int myBlockFile = myBlockPiece[2];
+    			if(myBlockFile > file and myBlockFile < myFile)
+    			{
+    				queenIsBlocked = true;
+    			}
+    		}
+    	}
+    	if(queenIsBlocked == false)
+    	{
+    		nrOfAttacks = nrOfAttacks + 1;
+    	}
+    }
+    
+    //Second, diagonals
+    std::vector< std::vector< std::vector<int>>> myPiecesOnDiagonals = piecesOnDiagonals(file, row);
+	std::vector< std::vector<int>> myFirstDiagonal = myPiecesOnDiagonals[0];
+	std::vector< std::vector<int>> mySecondDiagonal = myPiecesOnDiagonals[1];
+	std::vector< std::vector<int>> queensOnFirst;
+	std::vector< std::vector<int>> queensOnSecond;
+	
+	for(unsigned int i = 0; i < myFirstDiagonal.size(); ++i)
+	{
+		std::vector<int> myPiece = myFirstDiagonal[i];
+		if(myPiece[0] == 2 and myPiece[1] == attSide)
+		{
+			queensOnFirst.push_back(myPiece);
+		}
+	}
+	
+	for(unsigned int i = 0; i < mySecondDiagonal.size(); ++i)
+	{
+		std::vector<int> myPiece = mySecondDiagonal[i];
+		if(myPiece[0] == 4 and myPiece[1] == attSide)
+		{
+			queensOnSecond.push_back(myPiece);
+		}
+	}
+	
+	for(unsigned int i = 0; i < queensOnFirst.size(); ++i)
+	{
+		std::vector<int> myPiece = queensOnFirst[i];
+		int fileOfQueen = myPiece[2];
+		bool isQueenBlocked = false;
+		if(file > fileOfQueen)
+		{
+			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
+			{
+				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				int fileOfBlockPiece = myBlockPiece[2];
+				if(fileOfBlockPiece > fileOfQueen and fileOfBlockPiece < file)
+				{
+					isQueenBlocked = true;
+				}
+			}		
+		}
+		else if(file < fileOfQueen)
+		{
+			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
+			{
+				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				int fileOfBlockPiece = myBlockPiece[2];
+				if(fileOfBlockPiece < fileOfQueen and fileOfBlockPiece > file)
+				{
+					isQueenBlocked = true;
+				}
+			}
+		}
+		if(isQueenBlocked == false)
+		{
+			nrOfAttacks = nrOfAttacks + 1;
+		}
+	}
+	
+	for(unsigned int i = 0; i < queensOnSecond.size(); ++i)
+	{
+		std::vector<int> myPiece = queensOnSecond[i];
+		int fileOfQueen = myPiece[2];
+		bool isQueenBlocked = false;
+		if(file > fileOfQueen)
+		{
+			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
+			{
+				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				int fileOfBlockPiece = myBlockPiece[2];
+				if(fileOfBlockPiece > fileOfQueen and fileOfBlockPiece < file)
+				{
+					isQueenBlocked = true;
+				}
+			}		
+		}
+		else if(file < fileOfQueen)
+		{
+			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
+			{
+				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				int fileOfBlockPiece = myBlockPiece[2];
+				if(fileOfBlockPiece < fileOfQueen and fileOfBlockPiece > file)
+				{
+					isQueenBlocked = true;
+				}
+			}
+		}
+		if(isQueenBlocked == false)
+		{
+			nrOfAttacks = nrOfAttacks + 1;
+		}
+	}
+	
 	return nrOfAttacks;
 }
 
@@ -691,7 +877,7 @@ void Game::makeMove(std::string move)
 	int yFinish = std::stoi(rowFinish) - 1;
 	
 	std::vector<int> pieceAtStart = myBoard[yStart][xStart];
-	if(turn == 0 % 2)
+	if(turn % 2== 0 )
 	{
 		//white's turn
 		if(pieceAtStart[1] == 1 and legalMove(move))

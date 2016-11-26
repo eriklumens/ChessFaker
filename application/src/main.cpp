@@ -13,11 +13,11 @@ int main()
 	
 	Game game(myBoard, 0);
 	game.printBoard();
-	game.makeMove("a2f4");
+	game.makeMove("e2f4");
 	game.printBoard();
 	game.makeMove("e7e5");
 	game.printBoard();
-	game.makeMove("h1e4");
+	game.makeMove("f1d6");
 	game.printBoard();
-	std::cout << game.howManyTimesIsSquareAttackedByRook(0, 3, 1) << std::endl;
+	std::cout << game.howManyTimesIsSquareAttackedByQueen(7, 4, 1) << std::endl;
 }
