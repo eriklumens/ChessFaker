@@ -25,6 +25,7 @@ class Game
     std::vector< std::vector <int>> piecesOnFile(int file);
     std::vector< std::vector <int>> piecesOnRow(int row);
     std::vector< std::vector <int>> piecesHorseJumpAway(int file, int row);
+    std::vector< std::vector< std::vector<int>>> piecesOnDiagonals(int file, int row);
     bool legalMove(std::string move);
     void makeMove(std::string move);    
 };

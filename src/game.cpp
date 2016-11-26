@@ -191,7 +191,6 @@ std::vector< std::vector <int>> Game::piecesHorseJumpAway(int file, int row)
 				if(myX > -1 and myY > -1 and myX < 8 and myY < 8)
 				{
 					//Position lies inside the board
-									std::cout << "(" <<addValues[i] << ", " << addValues[j] << "): i = " << i << ", j = " << j <<std::endl;
 					std::vector<int> myPiece = myBoard[myY][myX];
 					if(myPiece[1] != 0)
 					{
@@ -202,6 +201,106 @@ std::vector< std::vector <int>> Game::piecesHorseJumpAway(int file, int row)
 		}
 	}
 	return myPiecesHorseJumpAway;
+}
+
+std::vector< std::vector< std::vector<int>>> Game::piecesOnDiagonals(int file, int row)
+{
+	std::vector< std::vector< std::vector<int>>> myPiecesOnDiagonals;
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	
+	//First diagonal direction is A1 to H8, second diagonal direction is A8 to H1
+	std::vector< std::vector<int>> myFirstDiagonal;
+	std::vector< std::vector<int>> mySecondDiagonal;
+	
+	bool onBoard = true;
+	int myFile = file;
+	int myRow = row;
+	int mySecFile = file;
+	int mySecRow = row;
+
+	//1st diagonal
+	while(onBoard)
+	{
+		myFile = myFile - 1;
+		myRow = myRow -1;
+		if(myFile < 0 or myRow < 0)
+		{
+			onBoard = false;
+		} 
+	}
+	myFile = myFile + 1;
+	myRow = myRow + 1;
+
+	//2nd diagonal
+	onBoard = true;
+	while(onBoard)
+	{
+		mySecFile = mySecFile - 1;
+		mySecRow = mySecRow + 1;
+		if(mySecFile < 0 or mySecRow > 7)
+		{
+			onBoard = false;
+		} 
+	}	
+	mySecFile = mySecFile + 1;
+	mySecRow = mySecRow - 1;
+
+	if(myFile <= myRow)
+	{
+		for(int i = 0; i < 8- myRow; ++i)
+		{
+			int myX = i;
+			int myY = myRow + i;
+			std::vector<int> myPiece = myBoard[myY][myX];
+			if(myPiece[1] != 0)
+			{
+				myFirstDiagonal.push_back(myPiece);
+			}
+		}
+	}
+	else
+	{
+		for(int i = 0; i < 8- myFile; ++i)
+		{
+			int myX = myFile + i;
+			int myY = i;
+			std::vector<int> myPiece = myBoard[myY][myX];
+			if(myPiece[1] != 0)
+			{
+				myFirstDiagonal.push_back(myPiece);
+			}
+		}
+	}	
+	if(mySecFile == 0)
+	{
+		for(int i = 0; i < mySecRow + 1; ++i)
+		{
+			int myX = i;
+			int myY = mySecRow - i;
+			std::vector<int> myPiece = myBoard[myY][myX];
+			if(myPiece[1] != 0)
+			{
+				mySecondDiagonal.push_back(myPiece);
+			}
+		}
+	}
+	else
+	{
+		for(int i = 0; i < 8- mySecFile; ++i)
+		{
+			std::cout << "i = " <<i <<  std::endl;
+			int myX = mySecFile + i;
+			int myY = 7 - i;
+			std::vector<int> myPiece = myBoard[myY][myX];
+			if(myPiece[1] != 0)
+			{
+				mySecondDiagonal.push_back(myPiece);
+			}
+		}	
+	}
+	myPiecesOnDiagonals.push_back(myFirstDiagonal);
+	myPiecesOnDiagonals.push_back(mySecondDiagonal);
+	return myPiecesOnDiagonals;
 }
 
 bool Game::legalMove(std::string move)

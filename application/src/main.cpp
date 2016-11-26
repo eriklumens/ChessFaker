@@ -17,9 +17,4 @@ int main()
 	game.printBoard();
 	game.makeMove("e7e5");
 	game.printBoard();
-	std::vector< std::vector <int>> row = game.piecesHorseJumpAway(3,2);
-	for(unsigned int i = 0; i < row.size(); ++i)
-	{
-		std::cout << row[i][0] << std::endl;
-	}
 }
