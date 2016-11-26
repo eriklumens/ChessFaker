@@ -196,6 +196,61 @@ std::vector< std::vector <int>> Game::piecesHorseJumpAway(int file, int row)
 	return myPiecesHorseJumpAway;
 }
 
+std::vector< std::vector <int>> Game::pawnsThatAttackSquare(int file, int row, int attSide)
+{
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	std::vector< std::vector <int>> myPawnsThatAttackSquare;
+	if(attSide == 1)
+	{
+		//White is attacking
+		int myY = row - 1;
+		int myFirstX = file + 1;
+		int mySecondX = file - 1;
+		
+		if(myFirstX < 8 and myY > -1)
+		{
+			std::vector <int> myPiece = myBoard[myY][myFirstX];
+			if(myPiece[0] == 6 and myPiece[1] == 1)
+			{
+				myPawnsThatAttackSquare.push_back(myPiece);
+			}
+		}
+		if(mySecondX > -1 and myY > -1)
+		{
+			std::vector <int> myPiece = myBoard[myY][mySecondX];
+			if(myPiece[0] == 6 and myPiece[1] == 1)
+			{
+				myPawnsThatAttackSquare.push_back(myPiece);
+			}
+		}
+	}
+	else if(attSide == 2)
+	{
+		//Black is attacking
+		int myY = row + 1;
+		int myFirstX = file + 1;
+		int mySecondX = file - 1;
+		
+		if(myFirstX < 8 and myY < 8)
+		{
+			std::vector <int> myPiece = myBoard[myY][myFirstX];
+			if(myPiece[0] == 6 and myPiece[1] == 1)
+			{
+				myPawnsThatAttackSquare.push_back(myPiece);
+			}
+		}
+		if(mySecondX > -1 and myY < 8)
+		{
+			std::vector <int> myPiece = myBoard[myY][mySecondX];
+			if(myPiece[0] == 6 and myPiece[1] == 1)
+			{
+				myPawnsThatAttackSquare.push_back(myPiece);
+			}
+		}
+	}
+	return myPawnsThatAttackSquare;
+}
+
 std::vector< std::vector< std::vector<int>>> Game::piecesOnDiagonals(int file, int row)
 {
 	std::vector< std::vector< std::vector<int>>> myPiecesOnDiagonals;
@@ -296,7 +351,7 @@ std::vector< std::vector< std::vector<int>>> Game::piecesOnDiagonals(int file, i
 	return myPiecesOnDiagonals;
 }
 
-int Game::howManyTimesIsSquareAttacked(int file, int row, int attSide)
+int Game::howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide)
 {
 	int nrOfAttacks = 0;
 	//First horse, is square attacked by horse of opposing side?
@@ -309,7 +364,46 @@ int Game::howManyTimesIsSquareAttacked(int file, int row, int attSide)
 			nrOfAttacks = nrOfAttacks + 1;
 		} 
 	}
-	//Next pawn, is square attacked by pawn of opposing side?
+	return nrOfAttacks;
+}
+
+int Game::howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide)
+{	
+	std::vector< std::vector <int>> myPawnsThatAttackSquare = pawnsThatAttackSquare(file, row, attSide);
+	
+	return myPawnsThatAttackSquare.size();
+}
+
+int Game::howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide)
+{
+	int nrOfAttacks = 0;
+	return nrOfAttacks;
+}
+
+int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
+{
+	int nrOfAttacks = 0;
+	return nrOfAttacks;
+}
+
+int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
+{
+	int nrOfAttacks = 0;
+	return nrOfAttacks;
+}
+
+int Game::howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide)
+{
+	int nrOfAttacks = 0;
+	
+	int pawn = howManyTimesIsSquareAttackedByPawn(file, row, attSide);
+	int horse = howManyTimesIsSquareAttackedByHorse(file, row, attSide);
+	int bishop = howManyTimesIsSquareAttackedByBishop(file, row, attSide);
+	int rook = howManyTimesIsSquareAttackedByRook(file, row, attSide);
+	int queen = howManyTimesIsSquareAttackedByQueen(file, row, attSide);
+	
+	nrOfAttacks = pawn + horse + bishop + rook + queen;
+	
 	return nrOfAttacks;
 }
 
@@ -337,7 +431,7 @@ bool Game::check()
 				} 
 			}
 		}
-		if(howManyTimesIsSquareAttacked(kingX,kingY,2) != 0)
+		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,2) != 0)
 		{
 			check = true;
 		}
@@ -362,7 +456,7 @@ bool Game::check()
 				} 
 			}
 		}
-		if(howManyTimesIsSquareAttacked(kingX,kingY,2) != 0)
+		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,2) != 0)
 		{
 			check = true;
 		}
