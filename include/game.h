@@ -35,7 +35,7 @@ class Game
 	int howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide);
 	int howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide);
 	
-    bool check();
+    int check();
     bool legalMove(std::string move);
     void makeMove(std::string move);    
 };

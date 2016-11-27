@@ -799,9 +799,9 @@ int Game::howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide
 	return nrOfAttacks;
 }
 
-bool Game::check()
+int Game::check()
 {
-	bool check = false;
+	int check = 0;
 	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
 	if(turn % 2 == 0)
 	{
@@ -825,7 +825,7 @@ bool Game::check()
 		}
 		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,2) != 0)
 		{
-			check = true;
+			check = 1;
 		}
 	}
 	else
@@ -850,7 +850,7 @@ bool Game::check()
 		}
 		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,2) != 0)
 		{
-			check = true;
+			check = 2;
 		}
 	}
 	return check;
@@ -859,7 +859,80 @@ bool Game::check()
 bool Game::legalMove(std::string move)
 {
 	bool legal = true;
-	// check, blocking, moving range -- no legal move will mean check mate
+	std::vector< std::vector< std::vector <int>>> myBoard = getBoard();
+	std::string fileStart = move.substr(0,1);
+	std::string rowStart = move.substr(1,1);
+	std::string fileFinish = move.substr(2,1);
+	std::string rowFinish = move.substr(3,1);
+	
+	int xStart = fileLetterIntoInt(fileStart);
+	int yStart = std::stoi(rowStart) - 1;
+	int xFinish = fileLetterIntoInt(fileFinish);
+	int yFinish = std::stoi(rowFinish) - 1;
+	
+	std::vector<int> pieceAtStart = myBoard[yStart][xStart];
+	std::vector<int> squareAtFinish = myBoard[yFinish][xFinish];
+	if(turn % 2 == 0 and pieceAtStart[1] == 1)
+	{
+		//It is white's turn and we try to move a white piece
+		if(pieceAtStart[0] == 1)
+		{
+			//King: check for check on new square, castle both sides
+		}
+		else if(pieceAtStart[0] == 2)
+		{
+			//Queen
+		}
+		else if(pieceAtStart[0] == 3)
+		{
+			//Rook
+		}
+		else if(pieceAtStart[0] == 4)
+		{
+			//Bishop
+		}
+		else if(pieceAtStart[0] == 5)
+		{
+			//Knight
+		}
+		else if(pieceAtStart[0] == 6)
+		{
+			//Pawn: en passant
+		}
+	}
+	else if(turn % 2 == 1 and pieceAtStart[1] == 2)
+	{
+		//It is black's turn and we try to move a black piece
+		if(pieceAtStart[0] == 1)
+		{
+			//King: check for check on new square, castle both sides
+		}
+		else if(pieceAtStart[0] == 2)
+		{
+			//Queen
+		}
+		else if(pieceAtStart[0] == 3)
+		{
+			//Rook
+		}
+		else if(pieceAtStart[0] == 4)
+		{
+			//Bishop
+		}
+		else if(pieceAtStart[0] == 5)
+		{
+			//Knight
+		}
+		else if(pieceAtStart[0] == 6)
+		{
+			//Pawn: en passant
+		}
+	}
+	else
+	{
+		legal = false;
+	}
+	
 	return legal;
 }
 
