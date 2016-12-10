@@ -40,10 +40,12 @@ int fileLetterIntoInt(std::string file)
 	return intOfFile;
 }
 
-Game::Game(std::vector< std::vector< std::vector <int>>> _board, int _turn)
+Game::Game(std::vector< std::vector< std::vector <int>>> _board, int _turn, std::vector< std::vector< std::vector< std::vector <int>>>> _history, std::vector<std::string> _moves)
 {
     board = _board;
     turn = _turn;
+    history = _history;
+    moves = _moves;
 }
 
 Game::~Game(){}
@@ -372,21 +374,6 @@ std::vector< std::vector <int>> Game::pawnsThatAttackSquare(int file, int row, i
 	return myPawnsThatAttackSquare;
 }
 
-int Game::howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide)
-{
-	int nrOfAttacks = 0;
-	std::vector< std::vector <int>> myPiecesHorseJumpAway = piecesHorseJumpAway(file,row);
-	for(unsigned int i = 0; i < myPiecesHorseJumpAway.size(); ++i)
-	{
-		std::vector<int> myPiece = myPiecesHorseJumpAway[i];
-		if(myPiece[0] == 5 and myPiece[1] == attSide)
-		{
-			nrOfAttacks = nrOfAttacks + 1;
-		} 
-	}
-	return nrOfAttacks;
-}
-
 int Game::howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide)
 {	
 	std::vector< std::vector <int>> myPawnsThatAttackSquare = pawnsThatAttackSquare(file, row, attSide);
@@ -394,9 +381,31 @@ int Game::howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide)
 	return myPawnsThatAttackSquare.size();
 }
 
-int Game::howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide)
+std::vector< std::vector<int>> Game::horsesThatAttackSquare(int file, int row, int attSide)
 {
-	int nrOfAttacks = 0;
+	std::vector< std::vector<int>> myHorsesThatAttackSquare;
+	std::vector< std::vector <int>> myPiecesHorseJumpAway = piecesHorseJumpAway(file,row);
+	for(unsigned int i = 0; i < myPiecesHorseJumpAway.size(); ++i)
+	{
+		std::vector<int> myPiece = myPiecesHorseJumpAway[i];
+		if(myPiece[0] == 5 and myPiece[1] == attSide)
+		{
+			myHorsesThatAttackSquare.push_back(myPiece);
+		} 
+	}
+	return myHorsesThatAttackSquare;
+}
+
+int Game::howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide)
+{
+	std::vector< std::vector<int>> myHorsesThatAttackSquare = horsesThatAttackSquare(file, row, attSide);
+	int nrOfAttacks = myHorsesThatAttackSquare.size();
+	return nrOfAttacks;
+}
+
+std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, int attSide)
+{
+	std::vector< std::vector<int>> myBishopsThatAttackSquare;
 	std::vector< std::vector< std::vector<int>>> myPiecesOnDiagonals = piecesOnDiagonals(file, row);
 	std::vector< std::vector<int>> myFirstDiagonal = myPiecesOnDiagonals[0];
 	std::vector< std::vector<int>> mySecondDiagonal = myPiecesOnDiagonals[1];
@@ -452,7 +461,7 @@ int Game::howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide)
 		}
 		if(isBishopBlocked == false)
 		{
-			nrOfAttacks = nrOfAttacks + 1;
+			myBishopsThatAttackSquare.push_back(myPiece);
 		}
 	}
 	
@@ -487,16 +496,23 @@ int Game::howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide)
 		}
 		if(isBishopBlocked == false)
 		{
-			nrOfAttacks = nrOfAttacks + 1;
+			myBishopsThatAttackSquare.push_back(myPiece);
 		}
 	}
 	
+	return myBishopsThatAttackSquare;
+}
+
+int Game::howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide)
+{
+	std::vector< std::vector<int>> myBishopsThatAttackSquare = bishopsThatAttackSquare(file, row, attSide);
+	int nrOfAttacks = myBishopsThatAttackSquare.size();	
 	return nrOfAttacks;
 }
 
-int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
+std::vector< std::vector <int>> Game::rooksThatAttackSquare(int file, int row, int attSide)
 {
-	int nrOfAttacks = 0;
+	std::vector< std::vector <int>> myRooksThatAttackSquare;
 	std::vector< std::vector <int>> myPiecesOnFile = piecesOnFile(file);
     std::vector< std::vector <int>> myPiecesOnRow = piecesOnRow(row);
     std::vector< std::vector<int>> rooksOnFile;
@@ -548,7 +564,7 @@ int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
     	}
     	if(rookIsBlocked == false)
     	{
-    		nrOfAttacks = nrOfAttacks + 1;
+    		myRooksThatAttackSquare.push_back(myPiece);
     	}
     }
     
@@ -583,16 +599,23 @@ int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
     	}
     	if(rookIsBlocked == false)
     	{
-    		nrOfAttacks = nrOfAttacks + 1;
+    		myRooksThatAttackSquare.push_back(myPiece);
     	}
     }
     
+	return myRooksThatAttackSquare;
+}
+
+int Game::howManyTimesIsSquareAttackedByRook(int file, int row, int attSide)
+{
+	std::vector< std::vector <int>> myRooksThatAttackSquare = rooksThatAttackSquare(file, row, attSide);
+	int nrOfAttacks = myRooksThatAttackSquare.size();
 	return nrOfAttacks;
 }
 
-int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
+std::vector< std::vector <int>> Game::queensThatAttackSquare(int file, int row, int attSide)
 {
-	int nrOfAttacks = 0;
+	std::vector< std::vector <int>> myQueensThatAttackSquare;
 	
 	//First files and rows
 	std::vector< std::vector <int>> myPiecesOnFile = piecesOnFile(file);
@@ -647,7 +670,7 @@ int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
     	}
     	if(queenIsBlocked == false)
     	{
-    		nrOfAttacks = nrOfAttacks + 1;
+    		myQueensThatAttackSquare.push_back(myPiece);
     	}
     }
     
@@ -682,7 +705,7 @@ int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
     	}
     	if(queenIsBlocked == false)
     	{
-    		nrOfAttacks = nrOfAttacks + 1;
+    		myQueensThatAttackSquare.push_back(myPiece);
     	}
     }
     
@@ -742,7 +765,7 @@ int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
 		}
 		if(isQueenBlocked == false)
 		{
-			nrOfAttacks = nrOfAttacks + 1;
+			myQueensThatAttackSquare.push_back(myPiece);
 		}
 	}
 	
@@ -777,10 +800,17 @@ int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
 		}
 		if(isQueenBlocked == false)
 		{
-			nrOfAttacks = nrOfAttacks + 1;
+			myQueensThatAttackSquare.push_back(myPiece);
 		}
 	}
 	
+	return myQueensThatAttackSquare;
+}
+
+int Game::howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide)
+{
+	std::vector< std::vector <int>> myQueensThatAttackSquare = queensThatAttackSquare(file,row,attSide);
+	int nrOfAttacks = myQueensThatAttackSquare.size();
 	return nrOfAttacks;
 }
 
@@ -793,6 +823,8 @@ int Game::howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide
 	int bishop = howManyTimesIsSquareAttackedByBishop(file, row, attSide);
 	int rook = howManyTimesIsSquareAttackedByRook(file, row, attSide);
 	int queen = howManyTimesIsSquareAttackedByQueen(file, row, attSide);
+	
+	std::cout << "attacks: " << pawn << horse << bishop << rook << queen << std::endl;
 	
 	nrOfAttacks = pawn + horse + bishop + rook + queen;
 	
@@ -823,6 +855,7 @@ int Game::check()
 				} 
 			}
 		}
+		std::cout << "kingX = " << kingX << " kingY = " << kingY << std::endl; 
 		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,2) != 0)
 		{
 			check = 1;
@@ -856,6 +889,215 @@ int Game::check()
 	return check;
 }
 
+std::vector< std::vector <int>> Game::squaresKingMoveAway(int file, int row)
+{
+	std::vector< std::vector <int>> mySquaresKingMoveAway;
+	std::vector<int> addValues = {1,0,-1};
+	for(int i = 0; i < 3; ++i)
+	{
+		for(int j = 0; j < 3; ++j)
+		{
+			if(!(j == 1 and i == 1))
+			{
+				int myX = file + addValues[i];
+				int myY = row + addValues[j];
+				if(myX > -1 and myY > -1 and myX < 8 and myY < 8)
+				{
+					//Position lies inside the board
+					std::vector<int> mySquare = board[myY][myX];
+				
+					mySquare.push_back(myX);
+					mySquare.push_back(myY);
+					mySquaresKingMoveAway.push_back(mySquare);
+				}
+			}
+		}
+	}
+	return mySquaresKingMoveAway;
+}
+
+bool Game::hasARookMoved()
+{
+	bool moveChecker = false;
+	for(unsigned int i = 0; i < moves.size(); ++i)
+	{
+		std::string myMove = moves[i];
+		std::string fileStart = myMove.substr(0,1);
+		std::string rowStart = myMove.substr(1,1);
+		int xStart = fileLetterIntoInt(fileStart);
+		int yStart = std::stoi(rowStart) - 1;
+		if(turn % 2 == 0)
+		{
+			if(xStart == 0 and yStart == 0)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+		else
+		{
+			if(xStart == 0 and yStart == 7)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+	}
+	return moveChecker;
+}
+
+bool Game::hasHRookMoved()
+{
+	bool moveChecker = false;
+	for(unsigned int i = 0; i < moves.size(); ++i)
+	{
+		std::string myMove = moves[i];
+		std::string fileStart = myMove.substr(0,1);
+		std::string rowStart = myMove.substr(1,1);
+		int xStart = fileLetterIntoInt(fileStart);
+		int yStart = std::stoi(rowStart) - 1;
+		if(turn % 2 == 0)
+		{
+			if(xStart == 7 and yStart == 0)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+		else
+		{
+			if(xStart == 7 and yStart == 7)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+	}
+	return moveChecker;
+}
+
+bool Game::hasKingMoved()
+{
+	bool moveChecker = false;
+	for(unsigned int i = 0; i < moves.size(); ++i)
+	{
+		std::string myMove = moves[i];
+		std::string fileStart = myMove.substr(0,1);
+		std::string rowStart = myMove.substr(1,1);
+		int xStart = fileLetterIntoInt(fileStart);
+		int yStart = std::stoi(rowStart) - 1;
+		if(turn % 2 == 0)
+		{
+			if(xStart == 4 and yStart == 0)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+		else
+		{
+			if(xStart == 4 and yStart == 7)
+			{
+				moveChecker = true;
+				return moveChecker;
+			}
+		}
+	}
+	return moveChecker;
+}
+bool Game::aPathClear()
+{
+	bool clear = false;
+	if(turn % 2 == 0)
+	{
+		std::vector<int> myFirstSquare = board[0][1];
+		std::vector<int> mySecondSquare = board[0][2];
+		std::vector<int> myThirdSquare = board[0][3];
+		if(myFirstSquare[1] == 0 and mySecondSquare[1] == 0 and myThirdSquare[1] == 0)
+		{
+			int firstSquareCheck = howManyTimesIsSquareAttackedWithoutKing(2, 0, 2);
+			int secondSquareCheck = howManyTimesIsSquareAttackedWithoutKing(3, 0, 2);
+			if(firstSquareCheck == 0 and secondSquareCheck == 0)
+			{
+				clear = true;
+			}
+		}
+	}
+	else
+	{
+		std::vector<int> myFirstSquare = board[7][1];
+		std::vector<int> mySecondSquare = board[7][2];
+		std::vector<int> myThirdSquare = board[7][3];
+		if(myFirstSquare[1] == 0 and mySecondSquare[1] == 0 and myThirdSquare[1] == 0)
+		{
+			int firstSquareCheck = howManyTimesIsSquareAttackedWithoutKing(2, 7, 1);
+			int secondSquareCheck = howManyTimesIsSquareAttackedWithoutKing(3, 7, 1);
+			if(firstSquareCheck == 0 and secondSquareCheck == 0)
+			{
+				clear = true;
+			}
+		}
+	}
+	return clear;
+}
+bool Game::hPathClear()
+{
+	bool clear = false;
+	if(turn % 2 == 0)
+	{
+		std::vector<int> myFirstSquare = board[0][6];
+		std::vector<int> mySecondSquare = board[0][5];
+		if(myFirstSquare[1] == 0 and mySecondSquare[1] == 0)
+		{
+			int firstSquareCheck = howManyTimesIsSquareAttackedWithoutKing(6, 0, 2);
+			int secondSquareCheck = howManyTimesIsSquareAttackedWithoutKing(5, 0, 2);
+			if(firstSquareCheck == 0 and secondSquareCheck == 0)
+			{
+				clear = true;
+			}
+		}
+	}
+	else
+	{
+		std::vector<int> myFirstSquare = board[7][6];
+		std::vector<int> mySecondSquare = board[7][5];
+		if(myFirstSquare[1] == 0 and mySecondSquare[1] == 0)
+		{
+			int firstSquareCheck = howManyTimesIsSquareAttackedWithoutKing(6, 7, 1);
+			int secondSquareCheck = howManyTimesIsSquareAttackedWithoutKing(5, 7, 1);
+			if(firstSquareCheck == 0 and secondSquareCheck == 0)
+			{
+				clear = true;
+			}
+		}
+	}
+	return clear;
+}
+
+bool Game::castleLongIsLegal()
+{
+	bool legal = false;
+	if(aPathClear() and hasARookMoved() == false and hasKingMoved() == false and check() == false)
+	{
+		legal = true;
+	}
+	return legal;
+}
+
+bool Game::castleShortIsLegal()
+{
+	bool legal = false;
+	std::cout << hPathClear() << std::endl;
+	std::cout << hasHRookMoved() << std::endl;
+	std::cout << hasKingMoved() << std::endl;
+	std::cout << check() << std::endl;
+	if(hPathClear() and hasHRookMoved() == false and hasKingMoved() == false and check() == false)
+	{
+		legal = true;
+	}
+	return legal;
+}
+
 bool Game::legalMove(std::string move)
 {
 	bool legal = true;
@@ -877,27 +1119,107 @@ bool Game::legalMove(std::string move)
 		//It is white's turn and we try to move a white piece
 		if(pieceAtStart[0] == 1)
 		{
-			//King: check for check on new square, castle both sides
+			//King: castling is checked seperately
+			std::vector< std::vector <int>> possibleSquares = squaresKingMoveAway(xStart, yStart);
+			bool flag = false;
+			for(unsigned int i = 0; i < possibleSquares.size(); ++i)
+			{
+				std::vector <int> mySquare = possibleSquares[i];
+				if(mySquare[1] == 0 and mySquare[2] == xFinish and mySquare[3] == yFinish)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 2)
 		{
 			//Queen
+			std::vector< std::vector<int>> myQueensThatAttackSquare = queensThatAttackSquare(xFinish, yFinish, 1);
+			bool flag = false;
+			for(unsigned int i = 0; i < myQueensThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myQueensThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 3)
 		{
 			//Rook
+			std::vector< std::vector<int>> myRooksThatAttackSquare = rooksThatAttackSquare(xFinish, yFinish, 1);
+			bool flag = false;
+			for(unsigned int i = 0; i < myRooksThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myRooksThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 4)
 		{
 			//Bishop
+			std::vector< std::vector<int>> myBishopsThatAttackSquare = bishopsThatAttackSquare(xFinish, yFinish, 1);
+			bool flag = false;
+			for(unsigned int i = 0; i < myBishopsThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myBishopsThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 5)
 		{
 			//Knight
+			std::vector< std::vector<int>> myHorsesThatAttackSquare = horsesThatAttackSquare(xFinish, yFinish, 1);
+			bool flag = false;
+			for(unsigned int i = 0; i < myHorsesThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myHorsesThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				std::cout << xPiece << yPiece << std::endl;
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 6)
 		{
-			//Pawn: en passant
+			//Pawn: en passant, promotion
+			
 		}
 	}
 	else if(turn % 2 == 1 and pieceAtStart[1] == 2)
@@ -905,27 +1227,107 @@ bool Game::legalMove(std::string move)
 		//It is black's turn and we try to move a black piece
 		if(pieceAtStart[0] == 1)
 		{
-			//King: check for check on new square, castle both sides
+			//King: castling is checked seperately
+			std::vector< std::vector <int>> possibleSquares = squaresKingMoveAway(xStart, yStart);
+			bool flag = false;
+			for(unsigned int i = 0; i < possibleSquares.size(); ++i)
+			{
+				std::vector <int> mySquare = possibleSquares[i];
+				if(mySquare[1] == 0 and mySquare[2] == xFinish and mySquare[3] == yFinish)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 2)
 		{
 			//Queen
+			std::vector< std::vector<int>> myQueensThatAttackSquare = queensThatAttackSquare(xFinish, yFinish, 2);
+			bool flag = false;
+			for(unsigned int i = 0; i < myQueensThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myQueensThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 3)
 		{
 			//Rook
+			std::vector< std::vector<int>> myRooksThatAttackSquare = rooksThatAttackSquare(xFinish, yFinish, 2);
+			bool flag = false;
+			for(unsigned int i = 0; i < myRooksThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myRooksThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 4)
 		{
 			//Bishop
+			std::vector< std::vector<int>> myBishopsThatAttackSquare = bishopsThatAttackSquare(xFinish, yFinish, 2);
+			bool flag = false;
+			for(unsigned int i = 0; i < myBishopsThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myBishopsThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 5)
 		{
 			//Knight
+			std::vector< std::vector<int>> myHorsesThatAttackSquare = horsesThatAttackSquare(xFinish, yFinish, 2);
+			bool flag = false;
+			for(unsigned int i = 0; i < myHorsesThatAttackSquare.size(); ++i)
+			{
+				std::vector<int> myPiece = myHorsesThatAttackSquare[i];
+				int xPiece = myPiece[2];
+				int yPiece = myPiece[3];
+				std::cout << xPiece << yPiece << std::endl;
+				if(xPiece == xStart and yPiece == yStart)
+				{
+					flag = true;
+				}
+			}
+			if(flag == false)
+			{
+				legal = false;
+			}
 		}
 		else if(pieceAtStart[0] == 6)
 		{
-			//Pawn: en passant
+			//Pawn: en passant, promotion
+			
 		}
 	}
 	else
@@ -953,13 +1355,60 @@ void Game::makeMove(std::string move)
 	if(turn % 2== 0 )
 	{
 		//white's turn
-		if(pieceAtStart[1] == 1 and legalMove(move))
+		if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 2 and yFinish == 0)
 		{
+			//Caste long
+			if(castleLongIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,1};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[0][0] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish + 1] = rook;
+				board = myBoard;
+				turn += 1;
+				history.push_back(board);
+				moves.push_back(move);
+			}
+			else
+			{
+				std::cout << "Not a legal move!" << std::endl;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 6 and yFinish == 0)
+		{
+			std::cout << "hello" << std::endl;
+			//Caste short
+			if(castleShortIsLegal())
+			{
+				std::cout << "castleshort" << std::endl;
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,1};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[0][7] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish - 1] = rook;
+				board = myBoard;
+				turn += 1;
+				history.push_back(board);
+				moves.push_back(move);
+			}
+			else
+			{
+				std::cout << "Not a legal move!" << std::endl;
+			}
+		}
+		else if(pieceAtStart[1] == 1 and legalMove(move))
+		{
+			std::cout << "not here" << std::endl;
 			std::vector<int> emptySquare = {0,0};
 			myBoard[yStart][xStart] = emptySquare;
 			myBoard[yFinish][xFinish] = pieceAtStart;
 			board = myBoard;
 			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
 		}
 		else
 		{
@@ -969,13 +1418,57 @@ void Game::makeMove(std::string move)
 	else
 	{
 		//black's turn
-		if(pieceAtStart[1] == 2 and legalMove(move))
+		if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 2 and yFinish == 7)
+		{
+			//Caste long
+			if(castleLongIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,2};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[7][0] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish + 1] = rook;
+				board = myBoard;
+				turn += 1;
+				history.push_back(board);
+				moves.push_back(move);
+			}
+			else
+			{
+				std::cout << "Not a legal move!" << std::endl;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 6 and yFinish == 7)
+		{
+			//Caste short
+			if(castleShortIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,2};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[7][7] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish - 1] = rook;
+				board = myBoard;
+				turn += 1;
+				history.push_back(board);
+				moves.push_back(move);
+			}
+			else
+			{
+				std::cout << "Not a legal move!" << std::endl;
+			}
+		}
+		else if(pieceAtStart[1] == 2 and legalMove(move))
 		{
 			std::vector<int> emptySquare = {0,0};
 			myBoard[yStart][xStart] = emptySquare;
 			myBoard[yFinish][xFinish] = pieceAtStart;
 			board = myBoard;
 			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
 		}
 		else
 		{
@@ -984,4 +1477,9 @@ void Game::makeMove(std::string move)
 	}
 	
 	return;
+}
+
+bool Game::isFinished()
+{
+	return false;
 }

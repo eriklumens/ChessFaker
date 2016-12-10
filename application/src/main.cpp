@@ -11,13 +11,27 @@ int main()
 	{{6,2},{6,2},{6,2},{6,2},{6,2},{6,2},{6,2},{6,2}},
 	{{3,2},{5,2},{4,2},{2,2},{1,2},{4,2},{5,2},{3,2}}};
 	
-	Game game(myBoard, 0);
-	game.printBoard();
-	game.makeMove("e2f4");
-	game.printBoard();
-	game.makeMove("e7e5");
-	game.printBoard();
-	game.makeMove("f1d6");
-	game.printBoard();
-	std::cout << game.howManyTimesIsSquareAttackedByQueen(7, 4, 1) << std::endl;
+	std::vector<std::vector<std::vector<std::vector<int> > > > myHistory;
+	myHistory.push_back(myBoard);
+	std::vector<std::string> myMoves;
+	
+	Game game(myBoard, 0, myHistory, myMoves);
+	
+	std::cout << game.check() << std::endl;
+	std::vector< std::vector <int>> pawns = game.pawnsThatAttackSquare(4, 0, 2);
+	for(unsigned int i = 0; i < pawns.size(); ++i)
+	{
+		std::vector <int> myPawn = pawns[i];
+		std::cout << "Pawn info:" << std::endl;
+		std::cout << myPawn[0] << myPawn[1] << myPawn[2] << myPawn[3] << std::endl;
+	}
+	
+	std::string moveString;
+	while(game.isFinished() == false)
+	{
+		game.printBoard();
+		std::cout << "Move: ";
+		std::cin >> moveString;
+		game.makeMove(moveString);
+	}
 }
