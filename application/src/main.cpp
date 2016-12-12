@@ -17,15 +17,6 @@ int main()
 	
 	Game game(myBoard, 0, myHistory, myMoves);
 	
-	std::cout << game.check() << std::endl;
-	std::vector< std::vector <int>> pawns = game.pawnsThatAttackSquare(4, 0, 2);
-	for(unsigned int i = 0; i < pawns.size(); ++i)
-	{
-		std::vector <int> myPawn = pawns[i];
-		std::cout << "Pawn info:" << std::endl;
-		std::cout << myPawn[0] << myPawn[1] << myPawn[2] << myPawn[3] << std::endl;
-	}
-	
 	std::string moveString;
 	while(game.isFinished() == false)
 	{
