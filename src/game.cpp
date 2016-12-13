@@ -406,12 +406,17 @@ int Game::howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide)
 std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, int attSide)
 {
 	std::vector< std::vector<int>> myBishopsThatAttackSquare;
+	// Need to have all pieces on both diagonals crossing the square
 	std::vector< std::vector< std::vector<int>>> myPiecesOnDiagonals = piecesOnDiagonals(file, row);
+	//first diagonal A1-H8
+	//second diagonal A8-H1
 	std::vector< std::vector<int>> myFirstDiagonal = myPiecesOnDiagonals[0];
 	std::vector< std::vector<int>> mySecondDiagonal = myPiecesOnDiagonals[1];
 	
 	std::vector< std::vector<int>> bishopsOnFirst;
 	std::vector< std::vector<int>> bishopsOnSecond;
+	
+	//look for bishop of the right colour on the first diagonal
 	for(unsigned int i = 0; i < myFirstDiagonal.size(); ++i)
 	{
 		std::vector<int> myPiece = myFirstDiagonal[i];
@@ -421,6 +426,7 @@ std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, 
 		}
 	}
 	
+	//look for bishop of the right colour on the second diagonal
 	for(unsigned int i = 0; i < mySecondDiagonal.size(); ++i)
 	{
 		std::vector<int> myPiece = mySecondDiagonal[i];
@@ -437,16 +443,13 @@ std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, 
 		bool isBishopBlocked = false;
 		if(file > fileOfBishop)
 		{
-			std::cout << "help" << std::endl;
 			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				std::vector<int> myBlockPiece = myFirstDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
-				std::cout << "file: " << myBlockPiece[2] << " row: " << myBlockPiece[3] << " piece: " << myBlockPiece[0] << std::endl;
 				if(fileOfBlockPiece > fileOfBishop and fileOfBlockPiece < file)
 				{
 					isBishopBlocked = true;
-					std::cout << "help" << std::endl;
 				}
 			}		
 		}
@@ -454,7 +457,7 @@ std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				std::vector<int> myBlockPiece = myFirstDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece < fileOfBishop and fileOfBlockPiece > file)
 				{
@@ -477,7 +480,7 @@ std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				std::vector<int> myBlockPiece = mySecondDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece > fileOfBishop and fileOfBlockPiece < file)
 				{
@@ -489,7 +492,7 @@ std::vector< std::vector<int>> Game::bishopsThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				std::vector<int> myBlockPiece = mySecondDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece < fileOfBishop and fileOfBlockPiece > file)
 				{
@@ -746,7 +749,7 @@ std::vector< std::vector <int>> Game::queensThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				std::vector<int> myBlockPiece = myFirstDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece > fileOfQueen and fileOfBlockPiece < file)
 				{
@@ -758,7 +761,7 @@ std::vector< std::vector <int>> Game::queensThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < myFirstDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = myFirstDiagonal[i];
+				std::vector<int> myBlockPiece = myFirstDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece < fileOfQueen and fileOfBlockPiece > file)
 				{
@@ -781,7 +784,7 @@ std::vector< std::vector <int>> Game::queensThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				std::vector<int> myBlockPiece = mySecondDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece > fileOfQueen and fileOfBlockPiece < file)
 				{
@@ -793,7 +796,7 @@ std::vector< std::vector <int>> Game::queensThatAttackSquare(int file, int row, 
 		{
 			for(unsigned int j = 0; j < mySecondDiagonal.size(); ++j)
 			{
-				std::vector<int> myBlockPiece = mySecondDiagonal[i];
+				std::vector<int> myBlockPiece = mySecondDiagonal[j];
 				int fileOfBlockPiece = myBlockPiece[2];
 				if(fileOfBlockPiece < fileOfQueen and fileOfBlockPiece > file)
 				{
