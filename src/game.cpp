@@ -1476,6 +1476,30 @@ void Game::makeMove(std::string move)
 	std::string fileFinish = move.substr(2,1);
 	std::string rowFinish = move.substr(3,1);
 	
+	std::string promotionPiece = "Q";
+	int promotionValue = 2;
+	if(move.length() == 5)
+	{
+		promotionPiece = move.substr(4,1);
+	}
+	
+	if(promotionPiece.compare("Q") == 0 or promotionPiece.compare("q") == 0)
+	{
+		promotionValue = 2;
+	}
+	else if(promotionPiece.compare("R") == 0 or promotionPiece.compare("r") == 0)
+	{
+		promotionValue = 3;
+	}
+	else if(promotionPiece.compare("B") == 0 or promotionPiece.compare("b") == 0)
+	{
+		promotionValue = 4;
+	}
+	else if(promotionPiece.compare("N") == 0 or promotionPiece.compare("n") == 0)
+	{
+		promotionValue = 5;
+	}
+	
 	int xStart = fileLetterIntoInt(fileStart);
 	int yStart = std::stoi(rowStart) - 1;
 	int xFinish = fileLetterIntoInt(fileFinish);
@@ -1485,7 +1509,29 @@ void Game::makeMove(std::string move)
 	if(turn % 2== 0 )
 	{
 		//white's turn
-		if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 2 and yFinish == 0)
+		if(pieceAtStart[0] == 6 and legalMove(move) and yStart == 6 and yFinish == 7) //promotion
+		{
+			std::vector<int> emptySquare = {0,0};
+			std::vector<int> promPiece = {promotionValue,1};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = promPiece;
+			board = myBoard;
+			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
+		}
+		else if(pieceAtStart[0] == 6 and !legalMove(move) and canPawnTakeEnPassant(xStart, xFinish) and yStart == 4)//en passant
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yStart][xFinish] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			board = myBoard;
+			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 2 and yFinish == 0)
 		{
 			//Caste long
 			if(castleLongIsLegal())
@@ -1545,7 +1591,29 @@ void Game::makeMove(std::string move)
 	else
 	{
 		//black's turn
-		if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 2 and yFinish == 7)
+		if(pieceAtStart[0] == 6 and legalMove(move) and yStart == 1 and yFinish == 0) //promotion
+		{
+			std::vector<int> emptySquare = {0,0};
+			std::vector<int> promPiece = {promotionValue,2};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = promPiece;
+			board = myBoard;
+			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
+		}		
+		else if(pieceAtStart[0] == 6 and !legalMove(move) and canPawnTakeEnPassant(xStart, xFinish) and yStart == 3)//en passant
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yStart][xFinish] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			board = myBoard;
+			turn += 1;
+			history.push_back(board);
+			moves.push_back(move);
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 2 and yFinish == 7)
 		{
 			//Caste long
 			if(castleLongIsLegal())
