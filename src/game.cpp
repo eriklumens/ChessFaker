@@ -1097,6 +1097,56 @@ bool Game::castleShortIsLegal()
 	return legal;
 }
 
+bool Game::canPawnTakeEnPassant(int filePawn, int fileOppPawn)
+{
+	bool takeEnPassant = false;
+	
+	std::string lastMove = moves[moves.size() - 1];
+	
+	std::string fileStart = lastMove.substr(0,1);
+	std::string rowStart = lastMove.substr(1,1);
+	std::string fileFinish = lastMove.substr(2,1);
+	std::string rowFinish = lastMove.substr(3,1);
+	
+	int xStart = fileLetterIntoInt(fileStart);
+	int yStart = std::stoi(rowStart) - 1;
+	int xFinish = fileLetterIntoInt(fileFinish);
+	int yFinish = std::stoi(rowFinish) - 1;
+	
+	if(xStart != xFinish or xStart != fileOppPawn)
+	{
+		return takeEnPassant;
+	}
+	
+	int oppSide = 0;
+	
+	if(turn % 2 == 0)
+	{
+		oppSide = 2;
+		if(yStart != 6 or yFinish != 4)
+		{
+			return takeEnPassant;
+		}
+	}
+	else
+	{
+		oppSide = 1;
+		if(yStart != 1 or yFinish != 3)
+		{
+			return takeEnPassant;
+		}
+	}
+	
+	std::vector<int> oppPiece = board[yFinish][xFinish];
+	
+	if(oppPiece[1] == oppSide and oppPiece[0] == 6)
+	{
+		takeEnPassant = true;
+	}
+	
+	return takeEnPassant;
+}
+
 bool Game::legalMove(std::string move)
 {
 	bool legal = true;
@@ -1220,8 +1270,45 @@ bool Game::legalMove(std::string move)
 		}
 		else if(pieceAtStart[0] == 6)
 		{
-			//Pawn: en passant, promotion
+			//Pawn: en passant, promotion is done seperately
+			int diff = yFinish - yStart;
+			if(diff < 1 or diff > 2)
+			{
+				legal = false;
+			}
+			if(xStart == xFinish) //forward motion
+			{
+				bool flag = false;
+				for(int i = 0; i < diff; ++i)
+				{
+					std::vector<int> mySquare = board[yStart + i + 1][xStart];
+					if(mySquare[1] != 0)
+					{
+						flag = true;
+					}
+				}
+				if(flag == true)
+				{
+					legal = false;
+				}
+				if(diff == 2 and yStart != 1)
+				{
+					legal = false;
+				}
+			}
 			
+			else if((xStart == xFinish + 1 or xStart == xFinish - 1) and diff == 1)//taking piece
+			{
+				std::vector<int> mySquare = board[yFinish][xFinish];
+				if(mySquare[1] != 2)
+				{
+					legal = false;
+				}
+			}	
+			else
+			{
+				legal = false;
+			}		
 		}
 	}
 	else if(turn % 2 == 1 and pieceAtStart[1] == 2)
@@ -1332,8 +1419,45 @@ bool Game::legalMove(std::string move)
 		}
 		else if(pieceAtStart[0] == 6)
 		{
-			//Pawn: en passant, promotion
+			//Pawn: en passant, promotion is done seperately
+			int diff = yStart - yFinish;
+			if(diff < 1 or diff > 2)
+			{
+				legal = false;
+			}
+			if(xStart == xFinish) //forward motion
+			{
+				bool flag = false;
+				for(int i = 0; i < diff; ++i)
+				{
+					std::vector<int> mySquare = board[yStart - (i + 1)][xStart];
+					if(mySquare[1] != 0)
+					{
+						flag = true;
+					}
+				}
+				if(flag == true)
+				{
+					legal = false;
+				}
+				if(diff == 2 and yStart != 6)
+				{
+					legal = false;
+				}
+			}
 			
+			else if((xStart == xFinish + 1 or xStart == xFinish - 1) and diff == 1)//taking piece
+			{
+				std::vector<int> mySquare = board[yFinish][xFinish];
+				if(mySquare[1] != 1)
+				{
+					legal = false;
+				}
+			}	
+			else
+			{
+				legal = false;
+			}	
 		}
 	}
 	else

@@ -53,6 +53,8 @@ class Game
     bool castleLongIsLegal();
     bool castleShortIsLegal();
     
+    bool canPawnTakeEnPassant(int filePawn, int fileOppPawn);
+    
     bool legalMove(std::string move);
     void makeMove(std::string move);  
     bool isFinished();  
