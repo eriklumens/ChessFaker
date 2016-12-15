@@ -24,24 +24,24 @@ class Game
     std::string getPrintValue(std::vector<int> piece);
     void printBoard();
     
-    std::vector< std::vector <int>> piecesOnFile(int file);
-    std::vector< std::vector <int>> piecesOnRow(int row);
-    std::vector< std::vector <int>> piecesHorseJumpAway(int file, int row);
-    std::vector< std::vector< std::vector<int>>> piecesOnDiagonals(int file, int row);
+    std::vector< std::vector <int>> piecesOnFile(int file, std::vector< std::vector< std::vector <int>>> myBoard);
+    std::vector< std::vector <int>> piecesOnRow(int row, std::vector< std::vector< std::vector <int>>> myBoard);
+    std::vector< std::vector <int>> piecesHorseJumpAway(int file, int row, std::vector< std::vector< std::vector <int>>> myBoard);
+    std::vector< std::vector< std::vector<int>>> piecesOnDiagonals(int file, int row, std::vector< std::vector< std::vector <int>>> myBoard);
     
-    std::vector< std::vector <int>> pawnsThatAttackSquare(int file, int row, int attSide);
-    int howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide);
-    std::vector< std::vector<int>> horsesThatAttackSquare(int file, int row, int attSide);
-    int howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide);
-    std::vector< std::vector<int>> bishopsThatAttackSquare(int file, int row, int attSide);
-	int howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide);
-	std::vector< std::vector<int>> rooksThatAttackSquare(int file, int row, int attSide);
-	int howManyTimesIsSquareAttackedByRook(int file, int row, int attSide);
-	std::vector< std::vector<int>> queensThatAttackSquare(int file, int row, int attSide);
-	int howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide);
-	int howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide);
+    std::vector< std::vector <int>> pawnsThatAttackSquare(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+    int howManyTimesIsSquareAttackedByPawn(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+    std::vector< std::vector<int>> horsesThatAttackSquare(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+    int howManyTimesIsSquareAttackedByHorse(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+    std::vector< std::vector<int>> bishopsThatAttackSquare(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	int howManyTimesIsSquareAttackedByBishop(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	std::vector< std::vector<int>> rooksThatAttackSquare(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	int howManyTimesIsSquareAttackedByRook(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	std::vector< std::vector<int>> queensThatAttackSquare(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	int howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
+	int howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
 	
-    int check();
+    int check(std::vector< std::vector< std::vector <int>>> myBoard);
     
     std::vector< std::vector <int>> squaresKingMoveAway(int file, int row);
     
