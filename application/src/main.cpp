@@ -16,6 +16,7 @@ int main()
 	std::vector<std::string> myMoves;
 	
 	Game game(myBoard, 0, myHistory, myMoves);
+	
 	std::string moveString;
 	while(game.isFinished(game.getBoard(), game.getTurn()) == false)
 	{
