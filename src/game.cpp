@@ -2007,7 +2007,6 @@ std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::ve
 			std::vector< std::vector <int>> bishops = bishopsThatAttackSquare(x, y, attSide,myBoard);
 			std::vector< std::vector <int>> rooks = rooksThatAttackSquare(x, y, attSide,myBoard);
 			std::vector< std::vector <int>> queens = queensThatAttackSquare(x, y, attSide,myBoard);
-			//std::vector< std::vector <int>> king = pawnsThatAttackSquare(x, y, attSide,myBoard);          KINGGGGG
 			
 			std::vector< std::vector <int>> myPieces;
 			
@@ -2036,7 +2035,7 @@ std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::ve
 				std::vector <int> queen = queens[i];
 				myPieces.push_back(queen);
 			}
-			//KINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
+
 			//Here I test for pawn moves stretching two squares
 			if(y == 3 and attSide == 1)
 			{
@@ -2055,33 +2054,138 @@ std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::ve
 				}
 			}
 			
+			std::vector<int> mySet = {-1, 0, 1};
+			
 			if(attSide == 1)//This should become a check around the square we are analyzing, so that this encompasses pawn + king + queening seperate thing for castling
 			{
-				if(y > 1)
+				for(int i = 0; i < 3; ++i)
 				{
-					std::vector<int> myPossiblePawn = myBoard[y-1][x];
-					if(myPossiblePawn[0] == 6 and myPossiblePawn[1] == 1)
+					for(int j = 0; j < 3; ++j)
 					{
-						std::string myMove = fileIntIntoLetter(x) + std::to_string(y) + fileIntIntoLetter(x) + std::to_string(y+1);
-						if(fullLegalMove(myMove, myBoard))
+						if(!(i == 1 and j == 1) and -1 < y + mySet[i] and 8 > y + mySet[i] and -1 < x + mySet[j] and 8 > x + mySet[j])
 						{
-							myLegalMoveList.push_back(myMove);
+							std::vector<int> myPawnOrKing = myBoard[y+mySet[i]][x+mySet[j]];
+							if(myPawnOrKing[0] == 1 and myPawnOrKing[1] == 1) //kingmove
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								if(fullLegalMove(myMove,myBoard))
+								{
+									myLegalMoveList.push_back(myMove);
+								}
+							}
+							else if(myPawnOrKing[0] == 6 and myPawnOrKing[1] == 1 and y != 7) //pawnmove
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								if(fullLegalMove(myMove,myBoard))
+								{
+									myLegalMoveList.push_back(myMove);
+								}
+							}
+							else if(myPawnOrKing[0] == 6 and myPawnOrKing[1] == 1 and y == 7) //queening
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								std::vector< std::string> myMoves = {myMove, myMove + "R", myMove + "B", myMove + "N"};
+								for(unsigned int a = 0; a < myMoves.size(); ++a)
+								{
+									std::string myMoveA = myMoves[a];
+									if(fullLegalMove(myMoveA,myBoard))
+									{
+										myLegalMoveList.push_back(myMoveA);
+									}
+								}
+							}
 						}
 					}
 				}
 			}	
 			else
 			{
-				if(y < 6)
+				for(int i = 0; i < 3; ++i)
 				{
-					std::vector<int> myPossiblePawn = myBoard[y+1][x];
-					if(myPossiblePawn[0] == 6 and myPossiblePawn[1] == 2)
+					for(int j = 0; j < 3; ++j)
 					{
-						std::string myMove = fileIntIntoLetter(x) + std::to_string(y+2) + fileIntIntoLetter(x) + std::to_string(y+1);
-						if(fullLegalMove(myMove, myBoard))
+						if(!(i == 1 and j == 1) and -1 < y + mySet[i] and 8 > y + mySet[i] and -1 < x + mySet[j] and 8 > x + mySet[j])
 						{
-							myLegalMoveList.push_back(myMove);
+							std::vector<int> myPawnOrKing = myBoard[y+mySet[i]][x+mySet[j]];
+							if(myPawnOrKing[0] == 1 and myPawnOrKing[1] == 2) //kingmove
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								if(fullLegalMove(myMove,myBoard))
+								{
+									myLegalMoveList.push_back(myMove);
+								}
+							}
+							else if(myPawnOrKing[0] == 6 and myPawnOrKing[1] == 2 and y != 0) //pawnmove
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								if(fullLegalMove(myMove,myBoard))
+								{
+									myLegalMoveList.push_back(myMove);
+								}
+							}
+							else if(myPawnOrKing[0] == 6 and myPawnOrKing[1] == 2 and y == 0) //queening
+							{
+								std::string myMove = fileIntIntoLetter(x + mySet[j]) + std::to_string(y+mySet[i] + 1) + fileIntIntoLetter(x) + std::to_string(y + 1); 
+								std::vector< std::string> myMoves = {myMove, myMove + "R", myMove + "B", myMove + "N"};
+								for(unsigned int a = 0; a < myMoves.size(); ++a)
+								{
+									std::string myMoveA = myMoves[a];
+									if(fullLegalMove(myMoveA,myBoard))
+									{
+										myLegalMoveList.push_back(myMoveA);
+									}
+								}
+							}
 						}
+					}
+				}				
+			}
+			
+			if(attSide == 1 and x == 6 and y == 0)//check for castling short
+			{
+				std::vector<int> myPossibleKing = myBoard[y][x-2];
+				if(myPossibleKing[0] == 1 and myPossibleKing[1] == 1)
+				{
+					std::string myMove = fileIntIntoLetter(x - 2) + std::to_string(1) + fileIntIntoLetter(x) + std::to_string(1); 
+					if(fullLegalMove(myMove,myBoard))
+					{
+						myLegalMoveList.push_back(myMove);
+					}
+				}
+			}
+			else if(attSide == 1 and x == 2 and y == 0)//check for castling long
+			{
+				std::vector<int> myPossibleKing = myBoard[y][x+2];
+				if(myPossibleKing[0] == 1 and myPossibleKing[1] == 1)
+				{
+					std::string myMove = fileIntIntoLetter(x + 2) + std::to_string(1) + fileIntIntoLetter(x) + std::to_string(1); 
+					if(fullLegalMove(myMove,myBoard))
+					{
+						myLegalMoveList.push_back(myMove);
+					}
+				}
+			}
+			else if(attSide == 2 and x == 6 and y == 7)//check for castling short
+			{
+				std::vector<int> myPossibleKing = myBoard[y][x-2];
+				if(myPossibleKing[0] == 1 and myPossibleKing[1] == 2)
+				{
+					std::string myMove = fileIntIntoLetter(x - 2) + std::to_string(8) + fileIntIntoLetter(x) + std::to_string(8); 
+					if(fullLegalMove(myMove,myBoard))
+					{
+						myLegalMoveList.push_back(myMove);
+					}
+				}
+			}
+			else if(attSide == 2 and x == 2 and y == 7)//check for castling long
+			{
+				std::vector<int> myPossibleKing = myBoard[y][x+2];
+				if(myPossibleKing[0] == 1 and myPossibleKing[1] == 2)
+				{
+					std::string myMove = fileIntIntoLetter(x + 2) + std::to_string(8) + fileIntIntoLetter(x) + std::to_string(8); 
+					if(fullLegalMove(myMove,myBoard))
+					{
+						myLegalMoveList.push_back(myMove);
 					}
 				}
 			}
