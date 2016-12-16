@@ -42,23 +42,23 @@ class Game
 	int howManyTimesIsSquareAttackedByQueen(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
 	int howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide, std::vector< std::vector< std::vector <int>>> myBoard);
 	
-    int check(std::vector< std::vector< std::vector <int>>> myBoard);
+    int check(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
     
-    std::vector< std::vector <int>> squaresKingMoveAway(int file, int row);
+    std::vector< std::vector <int>> squaresKingMoveAway(int file, int row, std::vector< std::vector< std::vector <int>>> myBoard);
     
-    bool hasARookMoved();
-    bool hasHRookMoved();
-    bool hasKingMoved();
-    bool aPathClear();
-    bool hPathClear();
-    bool castleLongIsLegal();
-    bool castleShortIsLegal();
+    bool hasARookMoved(int myTurn);
+    bool hasHRookMoved(int myTurn);
+    bool hasKingMoved(int myTurn);
+    bool aPathClear(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
+    bool hPathClear(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
+    bool castleLongIsLegal(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
+    bool castleShortIsLegal(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
     
-    bool canPawnTakeEnPassant(int filePawn, int fileOppPawn);
+    bool canPawnTakeEnPassant(int filePawn, int fileOppPawn, std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
     
     bool legalMove(std::string move);
     void makeMove(std::string move);  
-    bool fullLegalMove(std::string move, std::vector< std::vector< std::vector <int>>> myBoard); 
+    bool fullLegalMove(std::string move, std::vector< std::vector< std::vector <int>>> myBoard, int myTurn); 
     std::vector< std::string > legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int attSide);
-    bool isFinished();  
+    bool isFinished(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);  
 };
