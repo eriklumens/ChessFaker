@@ -1,4 +1,6 @@
 #include "game.h"
+#include "evaluation.cpp"
+#include "chessFakerEngine.cpp"
 #include <iostream>
 int main()
 {
@@ -16,7 +18,15 @@ int main()
 	std::vector<std::string> myMoves;
 	
 	Game game(myBoard, 0, myHistory, myMoves);
-	
+	std::cout << "Choose side (0 Analysis / 1 White / 2 Black): ";
+	int side = 0;
+	int depth = 1;
+	std::cin >> side;
+	if(side != 0)
+	{
+		std::cout << "Choose depth (1 - ...): ";
+		std::cin >> depth; 
+	}
 	std::string moveString;
 	while(game.isFinished(game.getBoard(), game.getTurn()) == false)
 	{
@@ -32,12 +42,16 @@ int main()
 			attSide = 2;
 		}
 		std::vector< std::string> myLegalMoves = game.legalMoveList(game.getBoard(), attSide);
-		for(unsigned int i = 0; i < myLegalMoves.size(); ++i)
+		
+		if((side == 1 and attSide == 1) or (side == 2 and attSide == 2) or side == 0)
 		{
-			std::cout << myLegalMoves[i] << ", ";		
+			std::cout << "Move: ";
+			std::cin >> moveString;
 		}
-		std::cout << "Move: ";
-		std::cin >> moveString;
+		else
+		{
+			moveString = engineOutput(game.getBoard(), game.getTurn(), side, depth);
+		}
 		game.makeMove(moveString);
 	}
 	game.printBoard();
