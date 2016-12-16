@@ -21,6 +21,21 @@ int main()
 	while(game.isFinished() == false)
 	{
 		game.printBoard();
+		int myTurn = game.getTurn();
+		int attSide = 0;
+		if(myTurn % 2 == 0)
+		{
+			attSide = 1;
+		}
+		else
+		{
+			attSide = 2;
+		}
+		std::vector< std::string> myLegalMoves = game.legalMoveList(game.getBoard(), attSide);
+		for(unsigned int i = 0; i < myLegalMoves.size(); ++i)
+		{
+			std::cout << myLegalMoves[i] << ", ";		
+		}
 		std::cout << "Move: ";
 		std::cin >> moveString;
 		game.makeMove(moveString);

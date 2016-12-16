@@ -40,6 +40,44 @@ int fileLetterIntoInt(std::string file)
 	return intOfFile;
 }
 
+std::string fileIntIntoLetter(int file)
+{
+	std::string letterOfFile = "";
+	if(file == 0)
+	{
+		letterOfFile = "a";
+	}
+	else if(file == 1)
+	{
+		letterOfFile = "b";
+	}
+	else if(file == 2)
+	{
+		letterOfFile = "c";
+	}
+	else if(file == 3)
+	{
+		letterOfFile = "d";
+	}
+	else if(file == 4)
+	{
+		letterOfFile = "e";
+	}
+	else if(file == 5)
+	{
+		letterOfFile = "f";
+	}
+	else if(file == 6)
+	{
+		letterOfFile = "g";
+	}
+	else if(file == 7)
+	{
+		letterOfFile = "h";
+	}
+	return letterOfFile;
+}
+
 Game::Game(std::vector< std::vector< std::vector <int>>> _board, int _turn, std::vector< std::vector< std::vector< std::vector <int>>>> _history, std::vector<std::string> _moves)
 {
     board = _board;
@@ -53,6 +91,11 @@ Game::~Game(){}
 std::vector< std::vector< std::vector <int>>> Game::getBoard()
 {
 	return board;
+}
+
+int Game::getTurn()
+{
+	return turn;
 }
 
 std::string Game::getPrintValue(std::vector<int> piece)
@@ -825,7 +868,6 @@ int Game::howManyTimesIsSquareAttackedWithoutKing(int file, int row, int attSide
 	int rook = howManyTimesIsSquareAttackedByRook(file, row, attSide, myBoard);
 	int queen = howManyTimesIsSquareAttackedByQueen(file, row, attSide, myBoard);
 	
-	std::cout << pawn << horse << bishop << rook << queen << std::endl;
 	nrOfAttacks = pawn + horse + bishop + rook + queen;
 	
 	return nrOfAttacks;
@@ -879,7 +921,6 @@ int Game::check(std::vector< std::vector< std::vector <int>>> myBoard)
 				} 
 			}
 		}
-		std::cout << "gonna check now" << std::endl;
 		if(howManyTimesIsSquareAttackedWithoutKing(kingX,kingY,1, myBoard) != 0)
 		{
 			check = 2;
@@ -1096,7 +1137,10 @@ bool Game::castleShortIsLegal()
 bool Game::canPawnTakeEnPassant(int filePawn, int fileOppPawn)
 {
 	bool takeEnPassant = false;
-	
+	if(moves.size() < 2)
+	{
+		return takeEnPassant;
+	}
 	std::string lastMove = moves[moves.size() - 1];
 	
 	std::string fileStart = lastMove.substr(0,1);
@@ -1115,7 +1159,6 @@ bool Game::canPawnTakeEnPassant(int filePawn, int fileOppPawn)
 	}
 	
 	int oppSide = 0;
-	
 	if(turn % 2 == 0)
 	{
 		oppSide = 2;
@@ -1132,14 +1175,11 @@ bool Game::canPawnTakeEnPassant(int filePawn, int fileOppPawn)
 			return takeEnPassant;
 		}
 	}
-	
 	std::vector<int> oppPiece = board[yFinish][xFinish];
-	
 	if(oppPiece[1] == oppSide and oppPiece[0] == 6)
 	{
 		takeEnPassant = true;
 	}
-	
 	return takeEnPassant;
 }
 
@@ -1719,11 +1759,8 @@ void Game::makeMove(std::string move)
 			std::vector<int> emptySquare = {0,0};
 			myBoard[yStart][xStart] = emptySquare;
 			myBoard[yFinish][xFinish] = pieceAtStart;
-			std::cout << "help1" << std::endl;
-			std::cout << check(myBoard) << std::endl;
 			if(check(myBoard) != 2)
 			{
-				std::cout << "help2" << std::endl;
 				board = myBoard;
 				turn += 1;
 				history.push_back(board);
@@ -1741,6 +1778,327 @@ void Game::makeMove(std::string move)
 	}
 	
 	return;
+}
+
+
+bool Game::fullLegalMove(std::string move, std::vector< std::vector< std::vector <int>>> myBoard)
+{
+	bool fullLegal = true;
+	std::string fileStart = move.substr(0,1);
+	std::string rowStart = move.substr(1,1);
+	std::string fileFinish = move.substr(2,1);
+	std::string rowFinish = move.substr(3,1);
+	
+	std::string promotionPiece = "Q";
+	int promotionValue = 2;
+	if(move.length() == 5)
+	{
+		promotionPiece = move.substr(4,1);
+	}
+	
+	if(promotionPiece.compare("Q") == 0 or promotionPiece.compare("q") == 0)
+	{
+		promotionValue = 2;
+	}
+	else if(promotionPiece.compare("R") == 0 or promotionPiece.compare("r") == 0)
+	{
+		promotionValue = 3;
+	}
+	else if(promotionPiece.compare("B") == 0 or promotionPiece.compare("b") == 0)
+	{
+		promotionValue = 4;
+	}
+	else if(promotionPiece.compare("N") == 0 or promotionPiece.compare("n") == 0)
+	{
+		promotionValue = 5;
+	}
+	
+	int xStart = fileLetterIntoInt(fileStart);
+	int yStart = std::stoi(rowStart) - 1;
+	int xFinish = fileLetterIntoInt(fileFinish);
+	int yFinish = std::stoi(rowFinish) - 1;
+	
+	std::vector<int> pieceAtStart = myBoard[yStart][xStart];
+	if(turn % 2== 0 )
+	{
+		//white's turn
+		if(pieceAtStart[0] == 6 and legalMove(move) and yStart == 6 and yFinish == 7) //promotion
+		{
+			std::vector<int> emptySquare = {0,0};
+			std::vector<int> promPiece = {promotionValue,1};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = promPiece;
+			if(check(myBoard) == 1)
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[0] == 6 and !legalMove(move) and canPawnTakeEnPassant(xStart, xFinish) and yStart == 4)//en passant
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yStart][xFinish] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			if(check(myBoard) == 1)
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 2 and yFinish == 0)
+		{
+			//Caste long
+			if(castleLongIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,1};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[0][0] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish + 1] = rook;
+				if(check(myBoard) == 1)
+				{
+					fullLegal = false;
+				}
+			}
+			else
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 1 and xStart == 4 and yStart == 0 and xFinish == 6 and yFinish == 0)
+		{
+			//Caste short
+			if(castleShortIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,1};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[0][7] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish - 1] = rook;
+				if(check(myBoard) == 1)
+				{
+					fullLegal = false;
+				}
+			}
+			else
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[1] == 1 and legalMove(move))
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			if(check(myBoard) == 1)
+			{
+				fullLegal = false;
+			}
+		}
+		else
+		{
+			fullLegal = false;
+		}
+	}
+	else
+	{
+		//black's turn
+		if(pieceAtStart[0] == 6 and legalMove(move) and yStart == 1 and yFinish == 0) //promotion
+		{
+			std::vector<int> emptySquare = {0,0};
+			std::vector<int> promPiece = {promotionValue,2};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = promPiece;
+			if(check(myBoard) == 2)
+			{
+				fullLegal = false;
+			}
+		}		
+		else if(pieceAtStart[0] == 6 and !legalMove(move) and canPawnTakeEnPassant(xStart, xFinish) and yStart == 3)//en passant
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yStart][xFinish] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			if(check(myBoard) == 2)
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 2 and yFinish == 7)
+		{
+			//Caste long
+			if(castleLongIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,2};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[7][0] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish + 1] = rook;
+				if(check(myBoard) == 2)
+				{
+					fullLegal = false;
+				}
+			}
+			else
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[0] == 1 and pieceAtStart[1] == 2 and xStart == 4 and yStart == 7 and xFinish == 6 and yFinish == 7)
+		{
+			//Caste short
+			if(castleShortIsLegal())
+			{
+				std::vector<int> emptySquare = {0,0};
+				std::vector<int> rook = {3,2};
+				myBoard[yStart][xStart] = emptySquare;
+				myBoard[7][7] = emptySquare;
+				myBoard[yFinish][xFinish] = pieceAtStart;
+				myBoard[yFinish][xFinish - 1] = rook;
+				if(check(myBoard) == 2)
+				{
+					fullLegal = false;
+				}
+			}
+			else
+			{
+				fullLegal = false;
+			}
+		}
+		else if(pieceAtStart[1] == 2 and legalMove(move))
+		{
+			std::vector<int> emptySquare = {0,0};
+			myBoard[yStart][xStart] = emptySquare;
+			myBoard[yFinish][xFinish] = pieceAtStart;
+			if(check(myBoard) == 2)
+			{
+				fullLegal = false;
+			}
+		}
+		else
+		{
+			fullLegal = false;
+		}
+	}
+	
+	return fullLegal;
+}
+
+//takeEnPassant has to be fixed
+std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int attSide)
+{
+	std::vector< std::string > myLegalMoveList;
+	//go through the whole board and check each square
+	for(int x = 0; x < 8; ++x)
+	{
+		for(int y = 0; y < 8; ++y)
+		{
+			std::vector <int> mySquare = myBoard[y][x];
+			if(mySquare[1] == attSide) 
+			{
+				continue;
+			}
+			
+			std::vector< std::vector <int>> pawns = pawnsThatAttackSquare(x, y, attSide,myBoard);
+			std::vector< std::vector <int>> horses = horsesThatAttackSquare(x, y, attSide,myBoard);
+			std::vector< std::vector <int>> bishops = bishopsThatAttackSquare(x, y, attSide,myBoard);
+			std::vector< std::vector <int>> rooks = rooksThatAttackSquare(x, y, attSide,myBoard);
+			std::vector< std::vector <int>> queens = queensThatAttackSquare(x, y, attSide,myBoard);
+			//std::vector< std::vector <int>> king = pawnsThatAttackSquare(x, y, attSide,myBoard);          KINGGGGG
+			
+			std::vector< std::vector <int>> myPieces;
+			
+			for(unsigned int i = 0; i < pawns.size(); ++i)
+			{
+				std::vector <int> pawn = pawns[i];
+				myPieces.push_back(pawn);
+			}
+			for(unsigned int i = 0; i < horses.size(); ++i)
+			{
+				std::vector <int> horse = horses[i];
+				myPieces.push_back(horse);
+			}
+			for(unsigned int i = 0; i < bishops.size(); ++i)
+			{
+				std::vector <int> bishop = bishops[i];
+				myPieces.push_back(bishop);
+			}
+			for(unsigned int i = 0; i < rooks.size(); ++i)
+			{
+				std::vector <int> rook = rooks[i];
+				myPieces.push_back(rook);
+			}
+			for(unsigned int i = 0; i < queens.size(); ++i)
+			{
+				std::vector <int> queen = queens[i];
+				myPieces.push_back(queen);
+			}
+			//KINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
+			//Here I test for pawn moves stretching two squares
+			if(y == 3 and attSide == 1)
+			{
+				std::string myMove = fileIntIntoLetter(x) + std::to_string(2) + fileIntIntoLetter(x) + std::to_string(4); 
+				if(fullLegalMove(myMove,myBoard))
+				{
+					myLegalMoveList.push_back(myMove);
+				}
+			}
+			if (y == 4 and attSide == 2)
+			{
+				std::string myMove = fileIntIntoLetter(x) + std::to_string(7) + fileIntIntoLetter(x) + std::to_string(5); 
+				if(fullLegalMove(myMove,myBoard))
+				{
+					myLegalMoveList.push_back(myMove);
+				}
+			}
+			
+			if(attSide == 1)//This should become a check around the square we are analyzing, so that this encompasses pawn + king + queening seperate thing for castling
+			{
+				if(y > 1)
+				{
+					std::vector<int> myPossiblePawn = myBoard[y-1][x];
+					if(myPossiblePawn[0] == 6 and myPossiblePawn[1] == 1)
+					{
+						std::string myMove = fileIntIntoLetter(x) + std::to_string(y) + fileIntIntoLetter(x) + std::to_string(y+1);
+						if(fullLegalMove(myMove, myBoard))
+						{
+							myLegalMoveList.push_back(myMove);
+						}
+					}
+				}
+			}	
+			else
+			{
+				if(y < 6)
+				{
+					std::vector<int> myPossiblePawn = myBoard[y+1][x];
+					if(myPossiblePawn[0] == 6 and myPossiblePawn[1] == 2)
+					{
+						std::string myMove = fileIntIntoLetter(x) + std::to_string(y+2) + fileIntIntoLetter(x) + std::to_string(y+1);
+						if(fullLegalMove(myMove, myBoard))
+						{
+							myLegalMoveList.push_back(myMove);
+						}
+					}
+				}
+			}
+			
+			for(unsigned int i = 0; i < myPieces.size(); ++i)
+			{
+				std::vector<int> myPiece = myPieces[i];
+				std::string myMove;
+				myMove = fileIntIntoLetter(myPiece[2]) + std::to_string(myPiece[3]+1) + fileIntIntoLetter(x) + std::to_string(y+1);
+				if(fullLegalMove(myMove, myBoard))
+				{
+					myLegalMoveList.push_back(myMove);
+				}				
+			}	
+		}
+	}
+	return myLegalMoveList;
 }
 
 bool Game::isFinished()

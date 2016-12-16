@@ -21,6 +21,7 @@ class Game
     Game(std::vector< std::vector< std::vector <int>>> board, int turn,std::vector< std::vector< std::vector< std::vector <int>>>> history, std::vector<std::string> moves);
     ~Game();
     std::vector< std::vector< std::vector <int>>> getBoard();
+    int getTurn();
     std::string getPrintValue(std::vector<int> piece);
     void printBoard();
     
@@ -57,5 +58,7 @@ class Game
     
     bool legalMove(std::string move);
     void makeMove(std::string move);  
+    bool fullLegalMove(std::string move, std::vector< std::vector< std::vector <int>>> myBoard); 
+    std::vector< std::string > legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int attSide);
     bool isFinished();  
 };
