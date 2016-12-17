@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <vector>
 #include <string>
 
@@ -59,6 +62,8 @@ class Game
     bool legalMove(std::string move);
     void makeMove(std::string move);  
     bool fullLegalMove(std::string move, std::vector< std::vector< std::vector <int>>> myBoard, int myTurn); 
-    std::vector< std::string > legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int attSide);
+    std::vector< std::string > legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);
     bool isFinished(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn);  
 };
+
+#endif

@@ -1987,7 +1987,6 @@ bool Game::fullLegalMove(std::string move, std::vector< std::vector< std::vector
 	return fullLegal;
 }
 
-//takeEnPassant has to be fixed
 std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::vector <int>>> myBoard, int myTurn)
 {
 	std::vector< std::string > myLegalMoveList;
@@ -2006,7 +2005,6 @@ std::vector< std::string > Game::legalMoveList(std::vector< std::vector< std::ve
 	{
 		for(int y = 0; y < 8; ++y)
 		{
-			
 			std::vector <int> mySquare = myBoard[y][x];
 			if(mySquare[1] == attSide) 
 			{

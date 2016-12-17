@@ -1,5 +1,4 @@
 #include "game.h"
-#include "evaluation.cpp"
 #include "chessFakerEngine.cpp"
 #include <iostream>
 int main()
@@ -41,7 +40,6 @@ int main()
 		{
 			attSide = 2;
 		}
-		std::vector< std::string> myLegalMoves = game.legalMoveList(game.getBoard(), attSide);
 		
 		if((side == 1 and attSide == 1) or (side == 2 and attSide == 2) or side == 0)
 		{
@@ -50,7 +48,7 @@ int main()
 		}
 		else
 		{
-			moveString = engineOutput(game.getBoard(), game.getTurn(), side, depth);
+			moveString = engineOutput(game, side, depth);
 		}
 		game.makeMove(moveString);
 	}

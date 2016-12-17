@@ -1,4 +1,6 @@
-float evaluationFunction(std::vector< std::vector< std::vector <int>>> board, int turn, std::vector< std::vector< std::vector< std::vector <int>>>> history, std::vector<std::string> moves)
+#include "game.h"
+
+float evaluationFunction(Game game)
 {
 	float evaluation = 0;
 	
